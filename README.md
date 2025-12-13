@@ -4,6 +4,13 @@
 3. copy file to raspberry pi pico: mpremote cp main.py :main.py
 4. start the script: mpremote reset
 
+# Running with print output
+1. mpremote cp main.py :main.py
+2. mpremote repl
+3. (inside repl:) exec(open('main.py').read())
+4. executing 3. also brings everything into scope from the main.py file
+5. Alternative: a soft reset (control-d) does the same as 3.
+
 # Connecting to the python repl
 1. Connect the raspberry pi without pressing the button (its only for firmware flashing)
 2. make sure nothing runs currently by running i.e.: mpremote ls
