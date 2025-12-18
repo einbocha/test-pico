@@ -132,6 +132,28 @@ def send_msg_to():
     return ""
 
 
+@app.route('/update_state', methods=['POST'])
+@auth.login_required
+def update_state_of():
+    username = auth.current_user()
+    # if username != 'admin':
+    #     abort(401)
+
+    friends = config_get_user(username)['friends']
+
+    data = request.get_json()
+
+    rec = data['receiver']
+    state = data['new_state']
+
+    if rec not in friends:
+        abort(400)
+
+    update_state(rec, state)
+
+    return ""
+
+
 @app.route('/admin_view')
 @auth.login_required
 def super_state():

@@ -1,0 +1,32 @@
+meta {
+  name: admin_update_u1
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://127.0.0.1:8000/update_state
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: admin
+}
+
+body:json {
+  {
+    "receiver": "u1",
+    "new_state": [
+      "here",
+      "only",
+      "strings"
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
