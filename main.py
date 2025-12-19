@@ -1,8 +1,20 @@
-import network, uasyncio as asyncio, socket
+import network, uasyncio as asyncio
 import time
+import ujson
+import urequests
+from machine import Pin, I2C
+from ssd1306 import SSD1306_I2C
 
-SSID = "einbocha's iPhone"
-PASSWORD = "bfowcueldicnejlvevxkg"
+# I2C setup (default pins GP4=SDA, GP5=SCL for Pico I2C0)
+i2c = I2C(0, sda=Pin(4), scl=Pin(5), freq=400000)
+
+# Scan and print I2C devices (should show 0x3C)
+# print('I2C devices:', [hex(addr) for addr in i2c.scan()])
+
+oled = SSD1306_I2C(128, 32, i2c)
+
+SSID = ""
+PASSWORD = ''
 
 # Wi-Fi connect
 wlan = network.WLAN(network.STA_IF)
@@ -15,48 +27,82 @@ while not wlan.isconnected():
     time.sleep(1)
     print('.', end='')
 
-print("\nIP:", wlan.ifconfig()[0])
-
-html = """\
-HTTP/1.0 200 OK\r
-Content-Type: text/html\r
-\r
-<!DOCTYPE html>
-<html>
-<body>
-<h1>Pico Form</h1>
-<form method="POST" action="/">
-<label>LED:</label>
-<select name="led">
-<option value="on">On</option>
-<option value="off">Off</option>
-</select>
-<button type="submit">Send</button>
-</form>
-</body>
-</html>
-"""
+print('\nIP:', wlan.ifconfig()[0])
 
 
-async def handle_client(reader, writer):
+STATE = '/state.json'
+
+
+def write_state(state):
     try:
-        request = await reader.read(1024)
-        req = request.decode()
-        req = req.split('\n')
+        with open(STATE, 'w') as f:
+            f.write(ujson.dumps(state))
 
-        for line in req:
-            print(line + '\n')
-        await writer.awrite(html)
-    finally:
-        await writer.aclose()
+        print(f'Saved state')
+    except Exception as e:
+        print('Write error:', e)
+
+
+def read_state():
+    try:
+        with open(STATE, 'r') as f:
+            return ujson.loads(f.read())
+    except Exception as e:
+        print('Read error:', e)
+        return None
+
+
+if not read_state():
+    write_state({
+        'state': [],
+    })
+
+
+async def personal_state():
+    while True:
+        try:
+            response = urequests.get(
+                'http://einbocha.ch:8000/',
+                auth=('', '')
+            )
+
+            data = ujson.loads(response.text)
+
+            print(data)
+
+            write_state(data)
+
+            response.close()
+
+        except Exception as e:
+            print('HTTP error:', e)
+
+        await asyncio.sleep(21)
+
+
+async def display_state():
+    while True:
+        state = read_state()
+
+        messages = state['state']
+
+        old = ''
+        for msg in messages:
+            if len(msg) > 16:
+                old = msg[:16]
+            oled.fill(0)
+            oled.text(old, 0, 0)
+            oled.text(msg, 0, 20)
+            oled.show()
+            old = msg
+            await asyncio.sleep(5)
+
 
 async def main():
-    # Manual server loop instead of server.serve_forever()
-    server = await asyncio.start_server(handle_client, "0.0.0.0", 80)
-    print("Server running on port 80")
+    asyncio.create_task(personal_state())
+    asyncio.create_task(display_state())
+
     while True:
-        # On some builds simply keeping the event loop alive is enough;
-        # the server internally accepts connections.
         await asyncio.sleep(1)
 
 asyncio.run(main())
