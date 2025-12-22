@@ -102,7 +102,7 @@ def update_state(username, rec, change):
 
     write_state(state)
 
-    app.logger.info(f'{username}: "{change}" -> rec')
+    app.logger.info(f'{username}: "{change}" -> {rec}')
 
 
 def msg_to_state(username, rec, msg):
@@ -115,7 +115,7 @@ def msg_to_state(username, rec, msg):
 
     write_state(state)
 
-    app.logger.info(f'{username}: "{msg}" -> rec')
+    app.logger.info(f'{username}: "{msg}" -> {rec}')
 
 
 @auth.verify_password
