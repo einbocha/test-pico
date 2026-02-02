@@ -1,7 +1,7 @@
 # Copying / running code on the pico
 0. cd into project folder
 1. python -m venv venv creates a virtual environment
-2. source ./venv/bin/actiavate activates the virtual environment
+2. source ./venv/bin/activate activates the virtual environment
 3. pip install -r requirements.txt (installs all packages)
 4. Make sure you'r in your python environment (venv activated).
 5. Make sure mpremote is installed (via pip install mpremote).
