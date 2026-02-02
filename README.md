@@ -1,8 +1,14 @@
 # Copying / running code on the pico
-1. Make sure you'r in your python environment (venv activated).
-2. Make sure mpremote is installed (via pip install mpremote).
-3. copy file to raspberry pi pico: mpremote cp main.py :main.py
-4. start the script: mpremote reset
+0. cd into project folder
+1. python -m venv venv creates a virtual environment
+2. source ./venv/bin/actiavate activates the virtual environment
+3. pip install -r requirements.txt (installs all packages)
+4. Make sure you'r in your python environment (venv activated).
+5. Make sure mpremote is installed (via pip install mpremote).
+6. copy file to raspberry pi pico: mpremote cp main.py :main.py
+7. start the script: mpremote reset
+
+8. pip freeze > requirements.txt (updates the package file with newly installed packages)
 
 # Running with print output
 1. mpremote cp main.py :main.py
