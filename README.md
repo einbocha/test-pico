@@ -1,5 +1,5 @@
 # Raspberry Pi Pico Experiments
-This project's prupose is to allow testing things on the raspberry pi pico as fast as possible and to then transform the gained knowledge into production ready code in a standalone project.
+The project's prupose is to allow testing things on the raspberry pi pico as fast as possible and to then transform the gained knowledge into production ready code in a standalone project.
 
 ## Tips & Tricks
 
